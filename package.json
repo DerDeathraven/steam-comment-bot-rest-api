@@ -1,0 +1,27 @@
+{
+    "name": "frontend",
+    "version": "1.0",
+    "description": "Frontend Playing around",
+    "scripts": {
+        "postinstall": "npx tsc"
+    },
+    "dependencies": {
+        "@types/axios": "^0.14.0",
+        "@types/express": "^4.17.17",
+        "@types/node": "^20.2.5",
+        "@types/steam-user": "^4.26.4",
+        "@types/steamcommunity": "^3.43.2",
+        "axios": "^1.4.0",
+        "body-parser": "^1.20.2",
+        "express": "^4.18.2",
+        "fast-xml-parser": "^4.2.2",
+        "socket.io": "^4.6.1",
+        "typescript": "^5.0.4"
+    },
+    "author": "DerDeathraven",
+    "link": "https://github.com/DerDeathraven",
+    "license": "GPL-3.0",
+    "pluginConfig": {
+        "enabled": true
+    }
+}
