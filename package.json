@@ -1,9 +1,10 @@
 {
-    "name": "frontend",
+    "name": "steam-comment-bot-rest",
     "version": "1.0",
     "description": "Frontend Playing around",
     "scripts": {
-        "postinstall": "npx tsc"
+        "postinstall": "npx tsc",
+        "build:dev": "tsc && curl http://localhost:4000/dev/reload"
     },
     "dependencies": {
         "@types/axios": "^0.14.0",
@@ -18,6 +19,7 @@
         "socket.io": "^4.6.1",
         "typescript": "^5.0.4"
     },
+    "main": "plugin.js",
     "author": "DerDeathraven",
     "link": "https://github.com/DerDeathraven",
     "license": "GPL-3.0",
