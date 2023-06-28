@@ -6,8 +6,7 @@ export interface Steambot_Plugin {
   ready?: () => void;
 }
 
-
-
-export type PluginInterface = {
-  controller: Controller;
+export type RPCReturnType = {
+  result: any;
+  status: number;
 };
