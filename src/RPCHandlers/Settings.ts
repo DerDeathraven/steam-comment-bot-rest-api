@@ -14,7 +14,6 @@ export class Settings {
   }
   setQuoteFile(params: { quoteFile: string }): RPCReturnType<string> {
     const file = params.quoteFile;
-    console.log(file);
     if (!file) {
       return {
         result: "Need a File",

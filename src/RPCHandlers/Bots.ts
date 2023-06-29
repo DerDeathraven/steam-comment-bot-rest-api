@@ -82,7 +82,6 @@ export class Bots {
     delete this.controller.data.logininfo[name];
     delete this.controller.bots[name];
 
-    console.log("testg");
     this.controller.login(false);
 
     return {

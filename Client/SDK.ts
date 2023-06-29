@@ -17,6 +17,17 @@ class AbstractRPC {
     const json = await res.json();
     return json.result;
   }
+  static async _generatePOSTMethodCall(methodname, params) {
+    const res = await fetch("/rpc/" + this.ClassName + "." + methodname, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(params),
+    });
+    const json = await res.json();
+    return json.result;
+  }
 }
 
 export class Bots extends AbstractRPC {
@@ -53,7 +64,7 @@ export class Settings extends AbstractRPC {
     return await this._generateMethodCall("getQuoteFile", {});
   }
   public static async setQuoteFile(quoteFile: string) {
-    return await this._generateMethodCall("setQuoteFile", { quoteFile });
+    return await this._generatePOSTMethodCall("setQuoteFile", { quoteFile });
   }
   public static async getPlugins() {
     return await this._generateMethodCall("getPlugins", {});

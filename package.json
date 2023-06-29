@@ -1,7 +1,7 @@
 {
     "name": "steam-comment-bot-rest",
     "version": "1.0",
-    "description": "Frontend Playing around",
+    "description": "REST API for the Steam Comment Bot",
     "scripts": {
         "postinstall": "npx tsc",
         "build:dev": "tsc && curl http://localhost:4000/dev/reload"

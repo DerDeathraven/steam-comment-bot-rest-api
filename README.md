@@ -19,6 +19,9 @@ This Plugins uses RPC to communicate with the backend
 Calls look like this:
 `localhost:4000/rpc/${Class}.${MethodName}?${params}`
 
+Request can either be GET or POST for POST params are taken from the body <br />
+this allows longer strings of texts or similar to be parsed
+
 ## SDK
 
 this plugin comes with an [SDK](./Client/SDK.ts) file that helps with the development of clients
@@ -30,6 +33,7 @@ class Bots {
   botCount(); // returns the amount of bots present
   getBots(); // returns an array of Bot objects
   addBot(name: string, password: string); // starts the authentication process and returns the index for the steamguard function
+  removeBot(name: string); // removes the specified bot from the bot pool please note that it will be back after reboot
   submitSteamGuardCode(botIndex: string, steamGuardCode: string); // enters the steamguard code
 }
 ```
@@ -39,6 +43,7 @@ class Settings {
   getQuoteFile(); // Returns the content of the quote file
   setQuoteFile(quoteFile: string); // sets the content of the quote file
   getPlugins(); // returns an array of installed plugins
+  getBootTime(); // returns the time needed to start
 }
 ```
 

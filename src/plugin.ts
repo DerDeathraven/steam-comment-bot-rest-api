@@ -60,9 +60,13 @@ class Plugin implements Steambot_Plugin {
     await this.loadConfig();
     this.currentState = PluginState.LOADING;
     this.app.get("/", (req, res) => {
-      if (DEV_FLAG) {
-        res.redirect("http://localhost:5173");
-      }
+      const paths = this.app._router.stack;
+      const cleanPaths = paths.map(
+        (layer: any) =>
+          `<a href="${layer.route?.path}">${layer.route?.path}</a>`
+      );
+      const filteredPaths = new Set(cleanPaths);
+      res.send([...filteredPaths].join("<br/>"));
     });
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({ extended: false }));
@@ -73,7 +77,6 @@ class Plugin implements Steambot_Plugin {
     this.app.get("/dev/reload", (req, res) => {
       this.reloadPlugins();
     });
-    console.log(this.config);
     if (this.config.headless !== undefined && !this.config.headless) {
       logger("info", "[REST-API] Serving Frontend on http://localhost:4000");
       this.loadFrontendFunctions();
@@ -82,7 +85,7 @@ class Plugin implements Steambot_Plugin {
     }
     this.startRPCHandlers();
 
-    this.app.listen(4000);
+    this.app.listen(this.config.port || 4000);
   }
 
   /**
@@ -132,11 +135,26 @@ class Plugin implements Steambot_Plugin {
         const isNotFunction = typeof func !== "function";
         const startsWith_ = name.startsWith("_");
         const isConstructor = name === "constructor";
+
         if (isNotFunction || startsWith_ || isConstructor) {
           continue;
         }
-        this.app.get("/rpc/" + index + "." + func.name, async (req, res) => {
+
+        this.app.get("/rpc/" + index + "." + func.name, (req, res) => {
           const params = req.query;
+          const result = func.bind(handler)(params);
+          if (result.then) {
+            result.then((result: RPCReturnType<any>) => {
+              res.statusCode = result.status;
+              res.send({ result: result.result });
+            });
+          } else {
+            res.statusCode = result.status;
+            res.send({ result: result.result });
+          }
+        });
+        this.app.post("/rpc/" + index + "." + func.name, (req, res) => {
+          const params = req.body;
           const result = func.bind(handler)(params);
           if (result.then) {
             result.then((result: RPCReturnType<any>) => {
