@@ -31,8 +31,9 @@ class Plugin implements Steambot_Plugin {
   private controller: PluginSystem["controller"];
   private commandHandler: PluginSystem["commandHandler"];
   private reloadPlugins: PluginSystem["reloadPlugins"];
-  private steamGuardBots: Record<number, (code: string) => void> = {};
+  private pluginSystem: PluginSystem;
   private rpcHandlers: RPCHandlers;
+  private config: Record<string, string>;
   app: ReturnType<typeof express>;
 
   constructor(sys: PluginSystem) {
@@ -41,13 +42,22 @@ class Plugin implements Steambot_Plugin {
     this.app = express();
     this.controller = sys.controller;
     this.commandHandler = sys.commandHandler;
+    this.config = {};
+    this.pluginSystem = sys;
     this.rpcHandlers = {
       Bots: new Bots(this.controller),
       Comment: new CommentHandler(this.commandHandler, this.controller),
       Settings: new Settings(this.controller),
     };
   }
-  load() {
+  async loadConfig() {
+    const config = await this.pluginSystem.loadPluginConfig(
+      "steam-comment-bot-rest"
+    );
+    this.config = config as Record<string, string>;
+  }
+  async load() {
+    await this.loadConfig();
     this.currentState = PluginState.LOADING;
     this.app.get("/", (req, res) => {
       if (DEV_FLAG) {
@@ -63,8 +73,13 @@ class Plugin implements Steambot_Plugin {
     this.app.get("/dev/reload", (req, res) => {
       this.reloadPlugins();
     });
-
-    this.loadFrontendFunctions();
+    console.log(this.config);
+    if (this.config.headless !== undefined && !this.config.headless) {
+      logger("info", "[REST-API] Serving Frontend on http://localhost:4000");
+      this.loadFrontendFunctions();
+    } else {
+      logger("info", "[REST-API] Starting headless mode");
+    }
     this.startRPCHandlers();
 
     this.app.listen(4000);
@@ -108,26 +123,21 @@ class Plugin implements Steambot_Plugin {
   startRPCHandlers() {
     const handlers = Object.entries(this.rpcHandlers);
     for (const [index, handler] of handlers) {
-      const functions = Object.getOwnPropertyNames(
-        Object.getPrototypeOf(handler)
-      );
+      const prototype = Object.getPrototypeOf(handler);
+      const functions = Object.getOwnPropertyNames(prototype);
+
       for (const name of functions) {
         //@ts-expect-error
         const func = handler[name];
-        if (
-          typeof func !== "function" ||
-          name.startsWith("_") ||
-          name === "constructor"
-        ) {
+        const isNotFunction = typeof func !== "function";
+        const startsWith_ = name.startsWith("_");
+        const isConstructor = name === "constructor";
+        if (isNotFunction || startsWith_ || isConstructor) {
           continue;
         }
-        console.log("/rpc/" + index + "." + func.name);
-
         this.app.get("/rpc/" + index + "." + func.name, async (req, res) => {
           const params = req.query;
-          console.log(params);
           const result = func.bind(handler)(params);
-          console.log(result);
           if (result.then) {
             result.then((result: RPCReturnType<any>) => {
               res.statusCode = result.status;
