@@ -8,14 +8,14 @@ export class Bots {
     this.controller = controller;
     this.steamGuardBots = {};
   }
-  botCount(): RPCReturnType {
+  botCount(): RPCReturnType<number> {
     return {
       status: 200,
       result: this.controller.getBots(undefined, false).length,
     };
   }
 
-  async getBots(): Promise<RPCReturnType> {
+  async getBots(): Promise<RPCReturnType<any>> {
     const bots = this.controller.getBots(undefined, false);
     const respArray = [];
     for (let bot of bots) {
@@ -25,6 +25,7 @@ export class Bots {
           index: bot.index,
           status: bot.status,
           loginData: bot.loginData,
+          name: bot.name,
           // @ts-ignore
           user: await getSteamUserInformation(user),
         });
@@ -35,7 +36,10 @@ export class Bots {
       result: respArray,
     };
   }
-  addBot(params: { name: string; password: string }): RPCReturnType {
+  addBot(params: {
+    name: string;
+    password: string;
+  }): RPCReturnType<{ error: string } | { bot: number }> {
     const { name, password } = params;
     if (!name || !password) {
       return {
@@ -63,9 +67,24 @@ export class Bots {
       result: respObject,
     };
   }
-  removeBot(name: string): RPCReturnType {
+  removeBot(params: {
+    name: string;
+  }): RPCReturnType<{ error: string } | string> {
+    const { name } = params;
+    if (!name) {
+      return {
+        status: 400,
+        result: {
+          error: "Missing name",
+        },
+      };
+    }
     delete this.controller.data.logininfo[name];
+    delete this.controller.bots[name];
+
+    console.log("testg");
     this.controller.login(false);
+
     return {
       status: 200,
       result: "ok",
@@ -77,7 +96,7 @@ export class Bots {
   submitSteamGuardCode(params: {
     botIndex: number;
     steamGuardCode: string;
-  }): RPCReturnType {
+  }): RPCReturnType<string> {
     const { botIndex, steamGuardCode } = params;
     if (!botIndex || !steamGuardCode) {
       return {

@@ -6,7 +6,7 @@ export interface Steambot_Plugin {
   ready?: () => void;
 }
 
-export type RPCReturnType = {
-  result: any;
+export type RPCReturnType<T extends any> = {
+  result: { error: string } | T;
   status: number;
 };

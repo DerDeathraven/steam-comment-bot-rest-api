@@ -8,7 +8,7 @@ export class CommentHandler {
     this.commandHandler = commandHandler;
     this.controller = controller;
   }
-  comment(params: { count: string; steamID: string }): RPCReturnType {
+  comment(params: { count: string; steamID: string }): RPCReturnType<string> {
     const { count, steamID } = params;
     if (!count || !steamID) {
       return {
@@ -30,7 +30,7 @@ export class CommentHandler {
       result: "ok",
     };
   }
-  commentCount(): RPCReturnType {
+  commentCount(): RPCReturnType<number> {
     return {
       status: 200,
       // @ts-ignore

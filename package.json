@@ -19,7 +19,7 @@
         "socket.io": "^4.6.1",
         "typescript": "^5.0.4"
     },
-    "main": "plugin.js",
+    "main": "./build/plugin.js",
     "author": "DerDeathraven",
     "link": "https://github.com/DerDeathraven",
     "license": "GPL-3.0",

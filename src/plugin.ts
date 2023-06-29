@@ -129,7 +129,7 @@ class Plugin implements Steambot_Plugin {
           const result = func.bind(handler)(params);
           console.log(result);
           if (result.then) {
-            result.then((result: RPCReturnType) => {
+            result.then((result: RPCReturnType<any>) => {
               res.statusCode = result.status;
               res.send({ result: result.result });
             });
