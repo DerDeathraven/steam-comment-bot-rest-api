@@ -1,6 +1,6 @@
 {
     "name": "steam-comment-bot-rest",
-    "version": "1.0",
+    "version": "1.0.3",
     "description": "REST API for the Steam Comment Bot",
     "scripts": {
         "postinstall": "npx tsc",
@@ -21,7 +21,15 @@
     },
     "main": "./build/plugin.js",
     "author": "DerDeathraven",
+    "bugs": {
+        "url": "https://github.com/DerDeathraven/steam-comment-bot-rest-api/issues"
+    },
+    "homepage": "https://github.com/DerDeathraven",
     "link": "https://github.com/DerDeathraven",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DerDeathraven/steam-comment-bot-rest-api.git"
+    },
     "license": "GPL-3.0",
     "pluginConfig": {
         "enabled": true

@@ -169,6 +169,7 @@ class Plugin implements Steambot_Plugin {
       }
     }
   }
+  unload() {}
 }
 
 module.exports = Plugin;
