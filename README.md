@@ -19,6 +19,10 @@ This Plugins uses RPC to communicate with the backend
 Calls look like this:
 `localhost:4000/rpc/${Class}.${MethodName}?${params}`
 
+## SDK
+
+this plugin comes with an [SDK](./Client/SDK.ts) file that helps with the development of clients
+
 ## Doc
 
 ```typescript
