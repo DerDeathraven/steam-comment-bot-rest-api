@@ -1,4 +1,3 @@
-import EventEmitter from "events";
 
 export interface Steambot_Plugin {
   load: () => void;

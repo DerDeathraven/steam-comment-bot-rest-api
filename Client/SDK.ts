@@ -80,3 +80,23 @@ export class Comments extends AbstractRPC {
     return await this._generateMethodCall("commentCount", {});
   }
 }
+
+export class Docs extends AbstractRPC {
+  static ClassName = "Docs";
+  public static async getDocFolders() {
+    return await this._generateMethodCall("getDocFolders", {});
+  }
+  public static async getDocFile(file: string) {
+    return await this._generateMethodCall("getDocFile", { file });
+  }
+  public static async getLatestChangelog() {
+    return await this._generateMethodCall("getLatestChangelog", {});
+  }
+}
+
+export class Frontend extends AbstractRPC {
+  static ClassName = "Frontend";
+  public static async getSteamProfile(steamID: string) {
+    return await this._generateMethodCall("getSteamProfile", { steamID });
+  }
+}
