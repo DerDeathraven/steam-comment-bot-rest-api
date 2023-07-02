@@ -12,6 +12,7 @@ import { resolve } from "path";
 import { Bots } from "./RPCHandlers/Bots";
 import { CommentHandler } from "./RPCHandlers/Comment";
 import { Settings } from "./RPCHandlers/Settings";
+import { Docs } from "./RPCHandlers/Docs";
 
 enum PluginState {
   NOT_LOADED,
@@ -23,6 +24,7 @@ type RPCHandlers = {
   Bots: Bots;
   Comment: CommentHandler;
   Settings: Settings;
+  Docs: Docs
 };
 
 const DEV_FLAG = true;
@@ -44,10 +46,12 @@ class Plugin implements Steambot_Plugin {
     this.commandHandler = sys.commandHandler;
     this.config = {};
     this.pluginSystem = sys;
+    const SettingsHandler = new Settings(this.controller)
     this.rpcHandlers = {
       Bots: new Bots(this.controller),
       Comment: new CommentHandler(this.commandHandler, this.controller),
-      Settings: new Settings(this.controller),
+      Settings: SettingsHandler,
+      Docs: new Docs(SettingsHandler)
     };
   }
   async loadConfig() {
