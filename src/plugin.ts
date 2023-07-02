@@ -1,18 +1,11 @@
 import express from "express";
 import { RPCReturnType, Steambot_Plugin } from "./types/PluginTypes";
-import SteamUser from "steam-user";
-import {
-  getSteamUserInformation,
-  getSteamUserProfile,
-} from "./helpers/SteamUser";
 import bodyParser from "body-parser";
-import { getBotsResponse } from "./types/ReturnTypes";
-import { readFileSync, readdirSync, writeFileSync } from "fs";
-import { resolve } from "path";
 import { Bots } from "./RPCHandlers/Bots";
 import { CommentHandler } from "./RPCHandlers/Comment";
 import { Settings } from "./RPCHandlers/Settings";
 import { Docs } from "./RPCHandlers/Docs";
+import { Frontend } from "./RPCHandlers/Frontend";
 
 enum PluginState {
   NOT_LOADED,
@@ -24,10 +17,10 @@ type RPCHandlers = {
   Bots: Bots;
   Comment: CommentHandler;
   Settings: Settings;
-  Docs: Docs
+  Docs: Docs;
+  Frontend?: Frontend;
 };
 
-const DEV_FLAG = true;
 class Plugin implements Steambot_Plugin {
   private currentState: PluginState;
   private controller: PluginSystem["controller"];
@@ -46,12 +39,13 @@ class Plugin implements Steambot_Plugin {
     this.commandHandler = sys.commandHandler;
     this.config = {};
     this.pluginSystem = sys;
-    const SettingsHandler = new Settings(this.controller)
+    const SettingsHandler = new Settings(this.controller);
+
     this.rpcHandlers = {
       Bots: new Bots(this.controller),
       Comment: new CommentHandler(this.commandHandler, this.controller),
       Settings: SettingsHandler,
-      Docs: new Docs(SettingsHandler)
+      Docs: new Docs(SettingsHandler),
     };
   }
   async loadConfig() {
@@ -97,28 +91,7 @@ class Plugin implements Steambot_Plugin {
    * and are not needed in headless mode.
    */
   loadFrontendFunctions() {
-    this.app.get("/frontend/getSteamProfile", async (req, res) => {
-      const user = req.query.user as string;
-      res.send(await getSteamUserProfile(user));
-    });
-    this.app.get("/frontend/getLatestChangelog", async (req, res) => {
-      const changelogPath = resolve(
-        process.cwd(),
-        "docs",
-        "wiki",
-        "changelogs"
-      );
-      const changelogFolder = readdirSync(changelogPath).sort();
-      const latestChangelog = changelogFolder.pop();
-      if (!latestChangelog) {
-        res.status(404).send();
-      }
-      const fileContent = readFileSync(
-        resolve(changelogPath, latestChangelog!),
-        "utf8"
-      );
-      res.send({ file: fileContent });
-    });
+    this.rpcHandlers.Frontend = new Frontend();
   }
 
   ready() {
