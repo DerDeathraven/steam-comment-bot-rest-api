@@ -13,6 +13,12 @@ for that change the config file like this:
 }
 ```
 
+## Frontend
+
+an official frontend is currently under development. The source code can be found [here](https://github.com/DerDeathraven/steam-comment-service-bot-frontend)
+
+version 1.0 will be shipped with this plugin when ready
+
 ## Implementation
 
 This Plugins uses RPC to communicate with the backend
