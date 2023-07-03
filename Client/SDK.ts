@@ -1,4 +1,4 @@
-import { getBotsResponse } from "./types/returnTypes";
+import { Proxy, getBotsResponse } from "./types/returnTypes";
 class AbstractRPC {
   static ClassName = "";
   static async _generateMethodCall(
@@ -68,6 +68,15 @@ export class Settings extends AbstractRPC {
   }
   public static async getPlugins() {
     return await this._generateMethodCall("getPlugins", {});
+  }
+  public static async getProxies(): Promise<Proxy[]> {
+    return await this._generateMethodCall("getProxies", {});
+  }
+  public static async addProxy(proxy: Proxy) {
+    return await this._generatePOSTMethodCall("addProxy", { proxy });
+  }
+  public static tailConsoleFile() {
+    return new EventSource("/rpc/Settings.tailConsoleFile");
   }
 }
 

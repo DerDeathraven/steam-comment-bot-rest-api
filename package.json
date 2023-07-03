@@ -1,6 +1,6 @@
 {
     "name": "steam-comment-bot-rest",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "REST API for the Steam Comment Bot",
     "scripts": {
         "postinstall": "npx tsc",
@@ -17,6 +17,7 @@
         "express": "^4.18.2",
         "fast-xml-parser": "^4.2.2",
         "socket.io": "^4.6.1",
+        "tail": "^2.2.6",
         "typescript": "^5.0.4"
     },
     "main": "./build/plugin.js",
@@ -33,5 +34,8 @@
     "license": "GPL-3.0",
     "pluginConfig": {
         "enabled": true
+    },
+    "devDependencies": {
+        "@types/tail": "^2.2.1"
     }
 }

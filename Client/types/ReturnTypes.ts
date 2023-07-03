@@ -50,3 +50,10 @@ export type getBotsResponse = {
     steamID: string;
   };
 }[];
+
+export type Proxy = {
+  port: string;
+  host: string;
+  username: string;
+  password: string;
+};

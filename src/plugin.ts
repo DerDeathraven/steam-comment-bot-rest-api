@@ -119,12 +119,15 @@ class Plugin implements Steambot_Plugin {
 
         this.app.get("/rpc/" + index + "." + func.name, (req, res) => {
           const params = req.query;
-          const result = func.bind(handler)(params);
+          const result = func.bind(handler)(params, res);
+
           if (result.then) {
-            result.then((result: RPCReturnType<any>) => {
-              res.statusCode = result.status;
-              res.send({ result: result.result });
-            });
+            result
+              .then((result: RPCReturnType<any>) => {
+                res.statusCode = result.status;
+                res.send({ result: result.result });
+              })
+              .catch((err: Error) => {});
           } else {
             res.statusCode = result.status;
             res.send({ result: result.result });
@@ -132,7 +135,7 @@ class Plugin implements Steambot_Plugin {
         });
         this.app.post("/rpc/" + index + "." + func.name, (req, res) => {
           const params = req.body;
-          const result = func.bind(handler)(params);
+          const result = func.bind(handler)(params, res);
           if (result.then) {
             result.then((result: RPCReturnType<any>) => {
               res.statusCode = result.status;
