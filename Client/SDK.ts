@@ -109,3 +109,13 @@ export class Frontend extends AbstractRPC {
     return await this._generateMethodCall("getSteamProfile", { steamID });
   }
 }
+
+export class Commands extends AbstractRPC {
+  static ClassName = "Commands";
+  public static async getCommandList() {
+    return await this._generateMethodCall("getCommandList", {});
+  }
+  public static async executeCommand(command: string, args: any[]) {
+    return await this._generateMethodCall("executeCommand", { command, args });
+  }
+}

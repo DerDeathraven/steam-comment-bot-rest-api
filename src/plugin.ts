@@ -6,6 +6,7 @@ import { CommentHandler } from "./RPCHandlers/Comment";
 import { Settings } from "./RPCHandlers/Settings";
 import { Docs } from "./RPCHandlers/Docs";
 import { Frontend } from "./RPCHandlers/Frontend";
+import { Commands } from "./RPCHandlers/Commands";
 
 enum PluginState {
   NOT_LOADED,
@@ -19,6 +20,7 @@ type RPCHandlers = {
   Settings: Settings;
   Docs: Docs;
   Frontend?: Frontend;
+  Commands: Commands;
 };
 
 class Plugin implements Steambot_Plugin {
@@ -46,6 +48,7 @@ class Plugin implements Steambot_Plugin {
       Comment: new CommentHandler(this.commandHandler, this.controller),
       Settings: SettingsHandler,
       Docs: new Docs(SettingsHandler),
+      Commands: new Commands(this.commandHandler, this.controller),
     };
   }
   async loadConfig() {
