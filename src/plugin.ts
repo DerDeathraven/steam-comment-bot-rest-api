@@ -7,6 +7,7 @@ import { Settings } from "./RPCHandlers/Settings";
 import { Docs } from "./RPCHandlers/Docs";
 import { Frontend } from "./RPCHandlers/Frontend";
 import { Commands } from "./RPCHandlers/Commands";
+import { IncomingMessage, Server, ServerResponse } from "http";
 
 enum PluginState {
   NOT_LOADED,
@@ -32,6 +33,7 @@ class Plugin implements Steambot_Plugin {
   private rpcHandlers: RPCHandlers;
   private config: Record<string, string>;
   app: ReturnType<typeof express>;
+  server: Server<typeof IncomingMessage, typeof ServerResponse> | undefined;
 
   constructor(sys: PluginSystem) {
     this.reloadPlugins = sys.reloadPlugins;
@@ -86,7 +88,7 @@ class Plugin implements Steambot_Plugin {
     }
     this.startRPCHandlers();
 
-    this.app.listen(this.config.port || 4000);
+    this.server = this.app.listen(this.config.port || 4000);
   }
 
   /**
@@ -152,7 +154,9 @@ class Plugin implements Steambot_Plugin {
       }
     }
   }
-  unload() {}
+  unload() {
+    this.server!.close();
+  }
 }
 
 module.exports = Plugin;
