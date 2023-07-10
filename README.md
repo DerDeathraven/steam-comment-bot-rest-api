@@ -1,4 +1,5 @@
 # Steam Comment Bot Rest API
+[![wakatime](https://wakatime.com/badge/user/baf819ad-1920-42f7-9957-867bec17c57c/project/db6c09fc-2c22-4d21-b978-9823fc32538f.svg)](https://wakatime.com/badge/user/baf819ad-1920-42f7-9957-867bec17c57c/project/db6c09fc-2c22-4d21-b978-9823fc32538f)
 
 A Rest API for the [Steam Comment Bot](https://github.com/HerrEurobeat/steam-comment-service-bot)
 
