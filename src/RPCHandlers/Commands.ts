@@ -1,5 +1,6 @@
 import { CommandDescription, commands } from "../schemes/commands";
 import { RPCReturnType } from "../types/PluginTypes";
+import { resInfo } from "../types/ResInfoObj";
 
 export class Commands {
   constructor(
@@ -18,8 +19,9 @@ export class Commands {
   executeCommand(params: {
     command: string;
     args: string[];
+    resInfo: resInfo;
   }): RPCReturnType<string> {
-    const { command, args } = params;
+    const { command, args, resInfo } = params;
     const needsArgs = commands.find((c) => c.name === command)?.args.length;
     if (!command || (needsArgs && !args)) {
       return {
@@ -38,13 +40,12 @@ export class Commands {
       this.commandHandler.runCommand(
         command,
         args,
-        this.controller.data.cachefile.ownerid[0],
         (context, infoData, data) => {
           console.log(data);
           info = data;
         },
         this,
-        {}
+        resInfo
       );
       return {
         status: 200,
