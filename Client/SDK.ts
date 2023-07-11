@@ -1,4 +1,6 @@
-import { Proxy, getBotsResponse } from "./types/returnTypes";
+import { Proxy, getBotsResponse } from "./types/ReturnTypes";
+import { resInfo } from "./types/ResInfoObj";
+
 class AbstractRPC {
   static ClassName = "";
   static async _generateMethodCall(
@@ -82,8 +84,8 @@ export class Settings extends AbstractRPC {
 
 export class Comments extends AbstractRPC {
   static ClassName = "Comment";
-  public static async comment(count: string, steamID: string) {
-    return await this._generateMethodCall("comment", { count, steamID });
+  public static async comment(count: string, steamID: string, resInfo: resInfo) {
+    return await this._generateMethodCall("comment", { count, steamID, resInfo });
   }
   public static async commentCount() {
     return await this._generateMethodCall("commentCount", {});
@@ -115,7 +117,7 @@ export class Commands extends AbstractRPC {
   public static async getCommandList() {
     return await this._generateMethodCall("getCommandList", {});
   }
-  public static async executeCommand(command: string, args: any[]) {
-    return await this._generateMethodCall("executeCommand", { command, args });
+  public static async executeCommand(command: string, args: any[], resInfo: resInfo) {
+    return await this._generateMethodCall("executeCommand", { command, args, resInfo });
   }
 }
