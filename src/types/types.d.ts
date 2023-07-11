@@ -1,3 +1,5 @@
+declare function logger(type: string, message: string): void;
+
 /**
  * Constructor - Initializes an object which represents a user steam account
  * @param controller - Reference to the controller object
@@ -399,6 +401,10 @@ declare class Controller {
      * The commandHandler object
      */
     commandHandler: CommandHandler;
+    /**
+     * Reference to the controller object
+     */
+    data: DataManager;
     /**
      * The pluginSystem handler
      */
