@@ -1,4 +1,5 @@
 import { RPCReturnType } from "../types/PluginTypes";
+import { resInfo } from "../types/ResInfoObj";
 
 export class CommentHandler {
   constructor(
@@ -8,8 +9,8 @@ export class CommentHandler {
     this.commandHandler = commandHandler;
     this.controller = controller;
   }
-  comment(params: { count: string; steamID: string }): RPCReturnType<string> {
-    const { count, steamID } = params;
+  comment(params: { count: string; steamID: string, resInfo: resInfo }): RPCReturnType<string> {
+    const { count, steamID, resInfo } = params;
     if (!count || !steamID) {
       return {
         status: 400,
@@ -20,10 +21,9 @@ export class CommentHandler {
     this.commandHandler.runCommand(
       "comment",
       [count, steamID],
-      steamID,
       () => {},
       this,
-      {}
+      resInfo
     );
     return {
       status: 200,
