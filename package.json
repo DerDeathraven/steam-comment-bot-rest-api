@@ -4,7 +4,8 @@
     "description": "REST API for the Steam Comment Bot",
     "scripts": {
         "postinstall": "npx tsc",
-        "build:dev": "tsc && curl http://localhost:4000/dev/reload"
+        "build:dev": "tsc && curl http://localhost:4000/dev/reload",
+        "dev": "tsc-watch --onSuccess 'curl http://localhost:4000/dev/reload'"
     },
     "dependencies": {
         "@types/axios": "^0.14.0",
@@ -18,6 +19,7 @@
         "fast-xml-parser": "^4.2.2",
         "socket.io": "^4.6.1",
         "tail": "^2.2.6",
+        "tsc-watch": "^6.0.4",
         "typescript": "^5.0.4"
     },
     "main": "./build/plugin.js",

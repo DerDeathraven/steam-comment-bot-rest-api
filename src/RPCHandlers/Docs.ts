@@ -9,8 +9,31 @@ export class Docs {
   }
   getLatestChangelog(): RPCReturnType<string> {
     const changelogPath = resolve(process.cwd(), "docs", "wiki", "changelogs");
-    const changelogFolder = readdirSync(changelogPath).sort();
-    const latestChangelog = changelogFolder.pop();
+    const changelogFolder = readdirSync(changelogPath).sort((a, b) => {
+      a = a.split("CHANGELOG_v").pop() || "";
+      let main_version_a = a.split(".")[0];
+      let sub_version_a = a.split(".")[1];
+
+      b = b.split("CHANGELOG_v").pop() || "";
+      let main_version_b = b.split(".")[0];
+      let sub_version_b = b.split(".")[1];
+
+      if (main_version_a == main_version_b) {
+        if (sub_version_a == "x") return 1;
+        if (sub_version_b == "x") return -1;
+        if (sub_version_a == sub_version_b) return 0;
+        if (parseInt(sub_version_a) < parseInt(sub_version_b)) {
+          return 1;
+        } else {
+          return -1;
+        }
+      } else if (main_version_a < main_version_b) {
+        return 1;
+      } else {
+        return -1;
+      }
+    });
+    const latestChangelog = changelogFolder.shift();
     if (!latestChangelog) {
       return {
         status: 404,

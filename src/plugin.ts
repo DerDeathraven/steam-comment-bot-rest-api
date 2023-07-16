@@ -7,6 +7,7 @@ import { Settings } from "./RPCHandlers/Settings";
 import { Docs } from "./RPCHandlers/Docs";
 import { Frontend } from "./RPCHandlers/Frontend";
 import { Commands } from "./RPCHandlers/Commands";
+import { Server, createServer } from "http";
 
 enum PluginState {
   NOT_LOADED,
@@ -32,16 +33,23 @@ class Plugin implements Steambot_Plugin {
   private rpcHandlers: RPCHandlers;
   private config: Record<string, string>;
   app: ReturnType<typeof express>;
+  private server: Server;
+  private pluginCommandHandler: Record<string, any>;
 
   constructor(sys: PluginSystem) {
-    this.reloadPlugins = sys.reloadPlugins;
+    this.reloadPlugins = sys.reloadPlugins.bind(sys);
     this.currentState = PluginState.NOT_LOADED;
     this.app = express();
     this.controller = sys.controller;
     this.commandHandler = sys.commandHandler;
     this.config = {};
     this.pluginSystem = sys;
+    this.server = createServer(this.app);
+    this.pluginCommandHandler = {};
     const SettingsHandler = new Settings(this.controller);
+
+    //@ts-expect-error
+    sys.addRPCPlugin = this.addPluginHandler.bind(this);
 
     this.rpcHandlers = {
       Bots: new Bots(this.controller),
@@ -56,6 +64,14 @@ class Plugin implements Steambot_Plugin {
       "steam-comment-bot-rest"
     );
     this.config = config as Record<string, string>;
+  }
+  addPluginHandler(pluginName: string, handler: any) {
+    try {
+      handler = new handler(this);
+    } catch (e) {
+      logger("error", `Error loading plugin ${pluginName}: ${e}`);
+    }
+    this.pluginCommandHandler[pluginName] = handler;
   }
   async load() {
     await this.loadConfig();
@@ -76,6 +92,12 @@ class Plugin implements Steambot_Plugin {
     });
 
     this.app.get("/dev/reload", (req, res) => {
+      if (!this.config.devMode) {
+        res.sendStatus(403);
+        return;
+      }
+      res.sendStatus(200);
+
       this.reloadPlugins();
     });
     if (this.config.headless !== undefined && !this.config.headless) {
@@ -86,7 +108,7 @@ class Plugin implements Steambot_Plugin {
     }
     this.startRPCHandlers();
 
-    this.app.listen(this.config.port || 4000);
+    this.server.listen(this.config.port || 4000);
   }
 
   /**
@@ -105,12 +127,20 @@ class Plugin implements Steambot_Plugin {
   }
   startRPCHandlers() {
     const handlers = Object.entries(this.rpcHandlers);
+    const pluginHandlers = Object.entries(this.pluginCommandHandler);
+    this._startRPCHandlers(handlers);
+    try {
+      this._startRPCHandlers(pluginHandlers);
+    } catch (e) {
+      logger("error", `Error loading plugin RPC Handler: ${e}`);
+    }
+  }
+  _startRPCHandlers(handlers: any) {
     for (const [index, handler] of handlers) {
       const prototype = Object.getPrototypeOf(handler);
       const functions = Object.getOwnPropertyNames(prototype);
 
       for (const name of functions) {
-        //@ts-expect-error
         const func = handler[name];
         const isNotFunction = typeof func !== "function";
         const startsWith_ = name.startsWith("_");
@@ -152,7 +182,9 @@ class Plugin implements Steambot_Plugin {
       }
     }
   }
-  unload() {}
+  unload() {
+    this.server.close();
+  }
 }
 
 module.exports = Plugin;

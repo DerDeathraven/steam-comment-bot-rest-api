@@ -1,5 +1,6 @@
 {
     "enabled": true,
     "headless": false,
-    "port": 4000
+    "port": 4000,
+    "devMode": false
 }
