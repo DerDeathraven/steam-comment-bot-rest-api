@@ -8,6 +8,8 @@ import { Docs } from "./RPCHandlers/Docs";
 import { Frontend } from "./RPCHandlers/Frontend";
 import { Commands } from "./RPCHandlers/Commands";
 import { Server, createServer } from "http";
+import { readdirSync } from "fs";
+import { resolve } from "path";
 
 enum PluginState {
   NOT_LOADED,
@@ -167,6 +169,7 @@ class Plugin implements Steambot_Plugin {
           }
         });
         this.app.post("/rpc/" + index + "." + func.name, (req, res) => {
+          console.log("test");
           const params = req.body;
           const result = func.bind(handler)(params, res);
           if (result.then) {
@@ -184,6 +187,9 @@ class Plugin implements Steambot_Plugin {
   }
   unload() {
     this.server.close();
+    readdirSync(__dirname + "/RPCHandlers").forEach((file) => {
+      delete require.cache[require.resolve(__dirname + "/RPCHandlers/" + file)];
+    });
   }
 }
 

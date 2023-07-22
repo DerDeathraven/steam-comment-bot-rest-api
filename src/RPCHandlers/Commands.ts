@@ -16,11 +16,11 @@ export class Commands {
       result: commands,
     };
   }
-  executeCommand(params: {
+  async executeCommand(params: {
     command: string;
     args: string[];
     resInfo: resInfo;
-  }): RPCReturnType<string> {
+  }): Promise<RPCReturnType<string>> {
     const { command, args, resInfo } = params;
     const needsArgs = commands.find((c) => c.name === command)?.args.length;
     if (!command || (needsArgs && !args)) {
@@ -36,17 +36,8 @@ export class Commands {
       };
     }
     try {
-      let info: any;
-      this.commandHandler.runCommand(
-        command,
-        args,
-        (context, infoData, data) => {
-          console.log(data);
-          info = data;
-        },
-        this,
-        resInfo
-      );
+      const info = await this._runCommand(command, args, resInfo);
+
       return {
         status: 200,
         result: info,
@@ -57,5 +48,22 @@ export class Commands {
         result: "Error executing command",
       };
     }
+  }
+  async _runCommand(
+    command: string,
+    args: any[],
+    resInfo: resInfo
+  ): Promise<string> {
+    return new Promise((resolve) => {
+      this.commandHandler.runCommand(
+        command,
+        args,
+        (context, infoData, data) => {
+          resolve(data as string);
+        },
+        this,
+        resInfo
+      );
+    });
   }
 }
