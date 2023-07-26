@@ -9,7 +9,6 @@ import { Frontend } from "./RPCHandlers/Frontend";
 import { Commands } from "./RPCHandlers/Commands";
 import { Server, createServer } from "http";
 import { readdirSync } from "fs";
-import { resolve } from "path";
 
 enum PluginState {
   NOT_LOADED,
