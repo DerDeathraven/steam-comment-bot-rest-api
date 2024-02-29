@@ -49,16 +49,15 @@ export class Bots {
         },
       };
     }
-    this.controller.data.logininfo[name] = {
+    this.controller.data.logininfo.push({
+      index: this.controller.data.logininfo.length,
       accountName: name,
       password: password,
       sharedSecret: "",
       steamGuardCode: null,
-      machineName: `'s Comment Bot`, // For steam-user
-      deviceFriendlyName: `'s Comment Bot`, // For steam-session
-    };
+    });
     this.controller.login(false);
-    const newIndex = Object.keys(this.controller.data.logininfo).length;
+    const newIndex = this.controller.data.logininfo.length - 1;
     const respObject = {
       bot: newIndex,
     };
@@ -79,10 +78,9 @@ export class Bots {
         },
       };
     }
-    delete this.controller.data.logininfo[name];
-    delete this.controller.bots[name];
-
-    this.controller.login(false);
+    this.controller.info.skippedaccounts.push(name);
+    this.controller.data.logininfo = this.controller.data.logininfo.filter((e : any) => e.accountName != name);
+    this.controller.bots[name].user.logOff();
 
     return {
       status: 200,

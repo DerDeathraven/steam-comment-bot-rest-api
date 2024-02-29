@@ -531,6 +531,10 @@ declare class Controller {
      */
     pluginSystem: PluginSystem;
     /**
+     * Stores various things
+     */
+    info: any;
+    /**
      * Restarts the whole application
      * @param data - Optional: Stringified restartdata object that will be kept through restarts
      */
