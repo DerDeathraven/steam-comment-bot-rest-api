@@ -1,6 +1,6 @@
 {
     "name": "steam-comment-bot-rest",
-    "version": "1.0.4",
+    "version": "1.2.0",
     "description": "REST API for the Steam Comment Bot",
     "scripts": {
         "postinstall": "npx tsc",
