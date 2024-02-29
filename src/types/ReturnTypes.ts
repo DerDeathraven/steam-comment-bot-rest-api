@@ -1,3 +1,10 @@
+enum EStatus {
+  OFFLINE,
+  ONLINE,
+  ERROR,
+  SKIPPED
+}
+
 export type getBotsResponse = {
   /**
    * Login index of this bot account
@@ -6,7 +13,7 @@ export type getBotsResponse = {
   /**
    * Status of this bot account
    */
-  status: number;
+  status: EStatus;
 
   /**
    * Additional login related information for this bot account
