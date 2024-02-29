@@ -9,18 +9,18 @@
     },
     "dependencies": {
         "@types/axios": "^0.14.0",
-        "@types/express": "^4.17.17",
-        "@types/node": "^20.2.5",
-        "@types/steam-user": "^4.26.4",
-        "@types/steamcommunity": "^3.43.2",
-        "axios": "^1.4.0",
+        "@types/express": "^4.17.21",
+        "@types/node": "^20.11.23",
+        "@types/steam-user": "^4.26.8",
+        "@types/steamcommunity": "^3.43.6",
+        "axios": "^1.6.7",
         "body-parser": "^1.20.2",
-        "express": "^4.18.2",
-        "fast-xml-parser": "^4.2.2",
-        "socket.io": "^4.6.1",
+        "express": "^4.18.3",
+        "fast-xml-parser": "^4.3.5",
+        "socket.io": "^4.7.4",
         "tail": "^2.2.6",
         "tsc-watch": "^6.0.4",
-        "typescript": "^5.0.4"
+        "typescript": "^5.3.3"
     },
     "main": "./build/plugin.js",
     "author": "DerDeathraven",
@@ -38,6 +38,6 @@
         "enabled": true
     },
     "devDependencies": {
-        "@types/tail": "^2.2.1"
+        "@types/tail": "^2.2.3"
     }
 }
