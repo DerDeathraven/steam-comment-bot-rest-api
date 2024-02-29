@@ -18,7 +18,7 @@ export const commands: Array<CommandDescription> = [
   {
     name: "comment",
     description:
-      "Request comments from all available bot accounts for a profile, group, sharedfile or discussion",
+      "Request comments from all available bot accounts for a profile, group, sharedfile, discussion or review",
     args: [
       {
         name: "amount",
@@ -28,7 +28,7 @@ export const commands: Array<CommandDescription> = [
       {
         name: "ID",
         description:
-          "The link, steamID64 or vanity of the profile, group, sharedfile or discussion to comment on (Owner only)",
+          "The link, steamID64 or vanity of the profile, group, sharedfile, discussion or review to comment on (Owner only)",
         type: "steamID64",
       },
       {
@@ -42,7 +42,7 @@ export const commands: Array<CommandDescription> = [
   {
     name: "upvote",
     description:
-      "Upvotes a sharedfile with all bot accounts that haven't yet voted on that item. Requires unlimited accounts!",
+      "Upvotes a sharedfile/review with all bot accounts that haven't yet voted on that item. Requires unlimited accounts!",
     args: [
       {
         name: "amount",
@@ -51,7 +51,7 @@ export const commands: Array<CommandDescription> = [
       },
       {
         name: "ID",
-        description: "The link or sharedfile ID to vote on",
+        description: "The link/id of the sharedfile or link of the review to vote on",
         type: "string",
       },
     ],
@@ -59,7 +59,7 @@ export const commands: Array<CommandDescription> = [
   {
     name: "downvote",
     description:
-      "Downvotes a sharedfile with all bot accounts that haven't yet voted on that item. Requires unlimited accounts! (Owner only)",
+      "Downvotes a sharedfile/review with all bot accounts that haven't yet voted on that item. Requires unlimited accounts! (Owner only)",
     args: [
       {
         name: "amount",
@@ -68,7 +68,24 @@ export const commands: Array<CommandDescription> = [
       },
       {
         name: "ID",
-        description: "The link or sharedfile ID to vote on",
+        description: "The link/id of the sharedfile or link of the review to vote on",
+        type: "string",
+      },
+    ],
+  },
+  {
+    name: "funnyvote",
+    description:
+      "Votes with funny on a review with all bot accounts that haven't yet voted on that item. Requires unlimited accounts!",
+    args: [
+      {
+        name: "amount",
+        description: "The amount of funnyvotes to request",
+        type: "string",
+      },
+      {
+        name: "ID",
+        description: "The link of the review to vote on",
         type: "string",
       },
     ],
@@ -336,6 +353,11 @@ export const commands: Array<CommandDescription> = [
         type: "steamID64",
       },
     ],
+  },
+  {
+    name: "jobs",
+    description: "Lists all currently registered jobs (Owner only)",
+    args: [],
   },
   {
     name: "reload",
