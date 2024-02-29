@@ -25,7 +25,7 @@ export class Bots {
           index: bot.index,
           status: bot.status,
           loginData: bot.loginData,
-          name: bot.name,
+          name: bot.loginData.logOnOptions.accountName,
           // @ts-ignore
           user: await getSteamUserInformation(user),
         });
