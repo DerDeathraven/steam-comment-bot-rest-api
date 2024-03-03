@@ -49,11 +49,9 @@ export class Settings {
     };
   }
   getProxies(): RPCReturnType<Proxy[]> {
-    const proxieFile = readFileSync(process.cwd() + "/proxies.txt", "utf8");
-    const proxieString = proxieFile.split("\n");
-    const filteredProxies = proxieString.filter((p) => !p.startsWith("//"));
-    const proxies: Proxy[] = filteredProxies.map((proxy) => {
-      const [userPass, hostPort] = proxy.split("@");
+    const filteredProxies = this.controller.data.proxies;
+    const proxies: Proxy[] = filteredProxies.map((e) => {
+      const [userPass, hostPort] = e.proxy.split("@");
       const user = userPass.split(":")[0];
       const pass = userPass.split(":")[1];
       const [host, port] = hostPort.split(":");
@@ -78,14 +76,13 @@ export class Settings {
       };
     }
     const dataManager = this.controller.data;
-    dataManager.proxies.push(
-      `http://${proxy.username}:${proxy.password}@${proxy.host}:${proxy.port}`
-    );
-    writeFileSync(
-      process.cwd() + "/proxies.txt",
-      dataManager.proxies.join("\n"),
-      "utf8"
-    );
+    dataManager.proxies.push({
+      proxyIndex: dataManager.proxies.length,
+      proxy: `http://${proxy.username}:${proxy.password}@${proxy.host}:${proxy.port}`,
+      isOnline: true,
+      lastOnlineCheck: 0
+    });
+    dataManager.writeProxiesToDisk();
     return {
       result: "ok",
       status: 200,

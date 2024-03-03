@@ -18,7 +18,7 @@ export const commands: Array<CommandDescription> = [
   {
     name: "comment",
     description:
-      "Requests comments from all available bot accounts for a profile, group or sharedfile",
+      "Request comments from all available bot accounts for a profile, group, sharedfile or discussion",
     args: [
       {
         name: "amount",
@@ -28,7 +28,7 @@ export const commands: Array<CommandDescription> = [
       {
         name: "ID",
         description:
-          "The link, steamID64 or vanity of the profile, group or sharedfile to comment on (Owner only)",
+          "The link, steamID64 or vanity of the profile, group, sharedfile or discussion to comment on (Owner only)",
         type: "steamID64",
       },
       {
@@ -93,7 +93,7 @@ export const commands: Array<CommandDescription> = [
   {
     name: "unfavorite",
     description:
-      "Unfavorizes a sharedfile with all bot accounts that have favorized that item. (Owners only)",
+      "Unfavorizes a sharedfile with all bot accounts that have favorized that item. (Owner only)",
     args: [
       {
         name: "amount",
@@ -103,6 +103,40 @@ export const commands: Array<CommandDescription> = [
       {
         name: "ID",
         description: "The link or sharedfile ID to vote on",
+        type: "string",
+      },
+    ],
+  },
+  {
+    name: "follow",
+    description:
+      "Follows a user with all bot accounts that haven't yet done so",
+    args: [
+      {
+        name: "amount",
+        description: "The amount of follows to request",
+        type: "string",
+      },
+      {
+        name: "ID",
+        description: "The link, steamID64 or vanity of the profile to follow (Owner only)",
+        type: "string",
+      },
+    ],
+  },
+  {
+    name: "unfollow",
+    description:
+      "Unfollows a user with all bot accounts that have followed them",
+    args: [
+      {
+        name: "amount",
+        description: "The amount of unfollows to request",
+        type: "string",
+      },
+      {
+        name: "ID",
+        description: "The link, steamID64 or vanity of the profile to unfollow (Owner only)",
         type: "string",
       },
     ],
@@ -173,9 +207,20 @@ export const commands: Array<CommandDescription> = [
     ],
   },
   {
+    name: "lang",
+    description: "Changes the language the bot will reply to you in. Call without params to see all supported languages.",
+    args: [
+      {
+        name: "language",
+        description: "Name of the language",
+        type: "string",
+      },
+    ],
+  },
+  {
     name: "failed",
     description:
-      "See the exact errors of the last comment request on your profile or provide an ID to see the errors of the last request you started. Owners can also view errors for requests started by other users",
+      "Displays the exact errors of the last request for your profile. Alternatively provide an ID of a request you have started. Owners can also view errors for requests started by other users.",
     args: [
       {
         name: "ID",
