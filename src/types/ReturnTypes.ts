@@ -1,4 +1,4 @@
-enum EStatus {
+export enum EStatus {
   OFFLINE,
   ONLINE,
   ERROR,

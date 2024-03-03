@@ -1,8 +1,11 @@
+import { EStatus } from "../types/ReturnTypes";
 
 export interface Steambot_Plugin {
   load: () => void;
   unload?: () => void;
   ready?: () => void;
+  statusUpdate?: (bot: Bot, oldStatus: EStatus, newStatus: EStatus) => void;
+  steamGuardInput?: (bot: Bot, submitCode: (code: string) => void) => void;
 }
 
 export type RPCReturnType<T extends any> = {
