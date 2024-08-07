@@ -94,7 +94,7 @@ class Plugin implements Steambot_Plugin {
 
     this.app.get("/dev/reload", (req, res) => {
       if (!this.config.devMode) {
-        res.sendStatus(403);
+        res.status(403).send("Error: Reload is only available in devMode");
         return;
       }
       res.sendStatus(200);
