@@ -9,6 +9,8 @@ import { Frontend } from "./RPCHandlers/Frontend";
 import { Commands } from "./RPCHandlers/Commands";
 import { Server, createServer } from "http";
 import { readdirSync } from "fs";
+import { EventEmitter } from "events";
+import { EStatus } from "./types/ReturnTypes";
 
 enum PluginState {
   NOT_LOADED,
@@ -36,6 +38,7 @@ class Plugin implements Steambot_Plugin {
   app: ReturnType<typeof express>;
   private server: Server;
   private pluginCommandHandler: Record<string, any>;
+  private pluginSystemEvents: EventEmitter;
 
   constructor(sys: PluginSystem) {
     this.reloadPlugins = sys.reloadPlugins.bind(sys);
@@ -59,6 +62,9 @@ class Plugin implements Steambot_Plugin {
       Docs: new Docs(SettingsHandler),
       Commands: new Commands(this.commandHandler, this.controller),
     };
+
+    // EventEmitter for passing events from PluginSystem to /event route
+    this.pluginSystemEvents = new EventEmitter();
   }
   async loadConfig() {
     const config = await this.pluginSystem.loadPluginConfig(
@@ -92,6 +98,7 @@ class Plugin implements Steambot_Plugin {
       res.send({ state: this.currentState });
     });
 
+    // Register development endpoint for reloading plugins
     this.app.get("/dev/reload", (req, res) => {
       if (!this.config.devMode) {
         res.status(403).send("Error: Reload is only available in devMode");
@@ -122,9 +129,17 @@ class Plugin implements Steambot_Plugin {
 
   ready() {
     this.currentState = PluginState.LOADED;
+    this.pluginSystemEvents.emit("event", { eventName: "ready" });
+  }
+  statusUpdate(bot: Bot, oldStatus: EStatus, newStatus: EStatus) {
+    this.pluginSystemEvents.emit("event", { eventName: "statusUpdate", botIndex: bot.index, oldStatus: oldStatus, newStatus: newStatus }); // TODO: Only index for bot is suboptimal
   }
   steamGuardInput(bot: Bot, submitCode: (code: string) => void) {
     this.rpcHandlers.Bots._addSteamguardBot(bot.index, submitCode);
+    this.pluginSystemEvents.emit("event", { eventName: "steamGuardInput", botIndex: bot.index }); // TODO: Only index for bot is suboptimal
+  }
+  steamGuardQrCode(bot: Bot, challengeUrl: string) {
+    this.pluginSystemEvents.emit("event", { eventName: "steamGuardQrCode", botIndex: bot.index, challengeUrl: challengeUrl }); // TODO: Only index for bot is suboptimal
   }
   startRPCHandlers() {
     const handlers = Object.entries(this.rpcHandlers);
