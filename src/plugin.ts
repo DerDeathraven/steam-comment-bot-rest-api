@@ -108,6 +108,32 @@ class Plugin implements Steambot_Plugin {
 
       this.reloadPlugins();
     });
+
+    // Register endpoint for subscribing to plugin events
+    this.app.get("/events", (req, res) => { // This must be an ES6 function to avoid creating a new context so we can access this
+      res.setHeader("Content-Type", "text/event-stream");
+      res.setHeader("Cache-Control", "no-cache");
+      res.flushHeaders();
+
+      logger("debug", "[REST-API] New event listener client registered");
+
+      // Add event listener to pluginSystemEvents for this client
+      const sendEventToClient = (data: any) => {
+        logger("debug", `[REST-API] Sending event '${data.eventName}' to this client`);
+
+        res.write(JSON.stringify(data));
+      };
+
+      this.pluginSystemEvents.on("event", sendEventToClient); // TODO: Does not detach on plugin unload (for example on reload)
+
+      // Handle client disconnect
+      req.on("close", () => {
+        logger("debug", "[REST-API] Event listener client disconnected");
+        this.pluginSystemEvents.removeListener("event", sendEventToClient);
+        res.end();
+      })
+    });
+
     if (this.config.headless !== undefined && !this.config.headless) {
       logger("info", "[REST-API] Serving Frontend on http://localhost:4000");
       this.loadFrontendFunctions();
