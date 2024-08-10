@@ -158,14 +158,42 @@ class Plugin implements Steambot_Plugin {
     this.pluginSystemEvents.emit("event", { eventName: "ready" });
   }
   statusUpdate(bot: Bot, oldStatus: EStatus, newStatus: EStatus) {
-    this.pluginSystemEvents.emit("event", { eventName: "statusUpdate", botIndex: bot.index, oldStatus: oldStatus, newStatus: newStatus }); // TODO: Only index for bot is suboptimal
+    this.pluginSystemEvents.emit("event", {
+      eventName: "statusUpdate",
+      bot: {
+        index: bot.index,
+        status: bot.status,
+        loginData: bot.loginData,
+        name: bot.loginData.logOnOptions.accountName
+      },
+      oldStatus: oldStatus,
+      newStatus: newStatus
+    });
   }
   steamGuardInput(bot: Bot, submitCode: (code: string) => void) {
     this.rpcHandlers.Bots._addSteamguardBot(bot.index, submitCode);
-    this.pluginSystemEvents.emit("event", { eventName: "steamGuardInput", botIndex: bot.index }); // TODO: Only index for bot is suboptimal
+
+    this.pluginSystemEvents.emit("event", {
+      eventName: "steamGuardInput",
+      bot: {
+        index: bot.index,
+        status: bot.status,
+        loginData: bot.loginData,
+        name: bot.loginData.logOnOptions.accountName
+      }
+    });
   }
   steamGuardQrCode(bot: Bot, challengeUrl: string) {
-    this.pluginSystemEvents.emit("event", { eventName: "steamGuardQrCode", botIndex: bot.index, challengeUrl: challengeUrl }); // TODO: Only index for bot is suboptimal
+    this.pluginSystemEvents.emit("event", {
+      eventName: "steamGuardQrCode",
+      bot: {
+        index: bot.index,
+        status: bot.status,
+        loginData: bot.loginData,
+        name: bot.loginData.logOnOptions.accountName
+      },
+      challengeUrl: challengeUrl
+    });
   }
   startRPCHandlers() {
     const handlers = Object.entries(this.rpcHandlers);
