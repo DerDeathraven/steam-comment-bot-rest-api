@@ -1,7 +1,7 @@
 # Steam Comment Bot Rest API
 [![wakatime](https://wakatime.com/badge/user/baf819ad-1920-42f7-9957-867bec17c57c/project/db6c09fc-2c22-4d21-b978-9823fc32538f.svg)](https://wakatime.com/badge/user/baf819ad-1920-42f7-9957-867bec17c57c/project/db6c09fc-2c22-4d21-b978-9823fc32538f)
 
-A Rest API for the [Steam Comment Bot](https://github.com/HerrEurobeat/steam-comment-service-bot)
+A Rest API for the [Steam Comment Bot](https://github.com/3urobeat/steam-comment-service-bot)
 
 ## Headless
 
@@ -16,7 +16,7 @@ for that change the config file like this:
 
 ## Frontend
 
-an official frontend is currently under development. The source code can be found [here](https://github.com/DerDeathraven/steam-comment-service-bot-frontend)
+An official frontend is currently under development. The source code can be found [here](https://github.com/DerDeathraven/steam-comment-service-bot-frontend)
 
 version 1.0 will be shipped with this plugin when ready
 
@@ -31,7 +31,7 @@ this allows longer strings of texts or similar to be parsed
 
 ## SDK
 
-this plugin comes with an [SDK](./Client/SDK.ts) file that helps with the development of clients
+This plugin comes with an [SDK](./Client/SDK.ts) file that helps with the development of clients
 
 ## Doc
 

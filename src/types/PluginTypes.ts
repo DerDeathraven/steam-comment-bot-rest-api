@@ -6,6 +6,7 @@ export interface Steambot_Plugin {
   ready?: () => void;
   statusUpdate?: (bot: Bot, oldStatus: EStatus, newStatus: EStatus) => void;
   steamGuardInput?: (bot: Bot, submitCode: (code: string) => void) => void;
+  steamGuardQrCode?: (bot: Bot, challengeUrl: string) => void;
 }
 
 export type RPCReturnType<T extends any> = {

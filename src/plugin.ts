@@ -9,6 +9,8 @@ import { Frontend } from "./RPCHandlers/Frontend";
 import { Commands } from "./RPCHandlers/Commands";
 import { Server, createServer } from "http";
 import { readdirSync } from "fs";
+import { EventEmitter } from "events";
+import { EStatus } from "./types/ReturnTypes";
 
 enum PluginState {
   NOT_LOADED,
@@ -36,6 +38,7 @@ class Plugin implements Steambot_Plugin {
   app: ReturnType<typeof express>;
   private server: Server;
   private pluginCommandHandler: Record<string, any>;
+  private pluginSystemEvents: EventEmitter;
 
   constructor(sys: PluginSystem) {
     this.reloadPlugins = sys.reloadPlugins.bind(sys);
@@ -59,6 +62,9 @@ class Plugin implements Steambot_Plugin {
       Docs: new Docs(SettingsHandler),
       Commands: new Commands(this.commandHandler, this.controller),
     };
+
+    // EventEmitter for passing events from PluginSystem to /event route
+    this.pluginSystemEvents = new EventEmitter();
   }
   async loadConfig() {
     const config = await this.pluginSystem.loadPluginConfig(
@@ -92,15 +98,42 @@ class Plugin implements Steambot_Plugin {
       res.send({ state: this.currentState });
     });
 
+    // Register development endpoint for reloading plugins
     this.app.get("/dev/reload", (req, res) => {
       if (!this.config.devMode) {
-        res.sendStatus(403);
+        res.status(403).send("Error: Reload is only available in devMode");
         return;
       }
       res.sendStatus(200);
 
       this.reloadPlugins();
     });
+
+    // Register endpoint for subscribing to plugin events
+    this.app.get("/events", (req, res) => { // This must be an ES6 function to avoid creating a new context so we can access this
+      res.setHeader("Content-Type", "text/event-stream");
+      res.setHeader("Cache-Control", "no-cache");
+      res.flushHeaders();
+
+      logger("debug", "[REST-API] New event listener client registered");
+
+      // Add event listener to pluginSystemEvents for this client
+      const sendEventToClient = (data: any) => {
+        logger("debug", `[REST-API] Sending event '${data.eventName}' to this client`);
+
+        res.write(JSON.stringify(data));
+      };
+
+      this.pluginSystemEvents.on("event", sendEventToClient); // TODO: Does not detach on plugin unload (for example on reload)
+
+      // Handle client disconnect
+      req.on("close", () => {
+        logger("debug", "[REST-API] Event listener client disconnected");
+        this.pluginSystemEvents.removeListener("event", sendEventToClient);
+        res.end();
+      })
+    });
+
     if (this.config.headless !== undefined && !this.config.headless) {
       logger("info", "[REST-API] Serving Frontend on http://localhost:4000");
       this.loadFrontendFunctions();
@@ -122,9 +155,45 @@ class Plugin implements Steambot_Plugin {
 
   ready() {
     this.currentState = PluginState.LOADED;
+    this.pluginSystemEvents.emit("event", { eventName: "ready" });
+  }
+  statusUpdate(bot: Bot, oldStatus: EStatus, newStatus: EStatus) {
+    this.pluginSystemEvents.emit("event", {
+      eventName: "statusUpdate",
+      bot: {
+        index: bot.index,
+        status: bot.status,
+        loginData: bot.loginData,
+        name: bot.loginData.logOnOptions.accountName
+      },
+      oldStatus: oldStatus,
+      newStatus: newStatus
+    });
   }
   steamGuardInput(bot: Bot, submitCode: (code: string) => void) {
     this.rpcHandlers.Bots._addSteamguardBot(bot.index, submitCode);
+
+    this.pluginSystemEvents.emit("event", {
+      eventName: "steamGuardInput",
+      bot: {
+        index: bot.index,
+        status: bot.status,
+        loginData: bot.loginData,
+        name: bot.loginData.logOnOptions.accountName
+      }
+    });
+  }
+  steamGuardQrCode(bot: Bot, challengeUrl: string) {
+    this.pluginSystemEvents.emit("event", {
+      eventName: "steamGuardQrCode",
+      bot: {
+        index: bot.index,
+        status: bot.status,
+        loginData: bot.loginData,
+        name: bot.loginData.logOnOptions.accountName
+      },
+      challengeUrl: challengeUrl
+    });
   }
   startRPCHandlers() {
     const handlers = Object.entries(this.rpcHandlers);
