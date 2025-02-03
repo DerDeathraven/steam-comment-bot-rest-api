@@ -79,6 +79,7 @@ export class Settings {
     dataManager.proxies.push({
       proxyIndex: dataManager.proxies.length,
       proxy: `http://${proxy.username}:${proxy.password}@${proxy.host}:${proxy.port}`,
+      ip: proxy.host,
       isOnline: true,
       lastOnlineCheck: 0
     });

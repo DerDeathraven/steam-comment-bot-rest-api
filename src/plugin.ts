@@ -195,6 +195,14 @@ class Plugin implements Steambot_Plugin {
       challengeUrl: challengeUrl
     });
   }
+  dataUpdate(key: string, oldData: any, newData: any) {
+    this.pluginSystemEvents.emit("event", {
+      eventName: "dataUpdate",
+      key: key,
+      oldData: oldData,
+      newData: newData
+    });
+  }
   startRPCHandlers() {
     const handlers = Object.entries(this.rpcHandlers);
     const pluginHandlers = Object.entries(this.pluginCommandHandler);
