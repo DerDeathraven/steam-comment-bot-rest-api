@@ -9,7 +9,7 @@ export class CommentHandler {
     this.commandHandler = commandHandler;
     this.controller = controller;
   }
-  comment(params: { count: string; steamID: string, resInfo: resInfo }): RPCReturnType<string> {
+  async comment(params: { count: string; steamID: string, resInfo: resInfo }): Promise<RPCReturnType<string>> {
     const { count, steamID, resInfo } = params;
     if (!count || !steamID) {
       return {
@@ -18,16 +18,17 @@ export class CommentHandler {
       };
     }
 
-    this.commandHandler.runCommand(
+    const result = await this.commandHandler.runCommand(
       "comment",
       [count, steamID],
       () => {},
       this,
       resInfo
     );
+
     return {
-      status: 200,
-      result: "ok",
+      status: result.success ? 200 : 400,
+      result: result.reason,
     };
   }
   commentCount(): RPCReturnType<number> {
