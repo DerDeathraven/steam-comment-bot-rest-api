@@ -127,7 +127,7 @@ export const commands: Array<CommandDescription> = [
   {
     name: "follow",
     description:
-      "Follows a user with all bot accounts that haven't yet done so",
+      "Follows a user/curator/workshop item with all bot accounts that haven't yet done so",
     args: [
       {
         name: "amount",
@@ -136,7 +136,7 @@ export const commands: Array<CommandDescription> = [
       },
       {
         name: "ID",
-        description: "The link, steamID64 or vanity of the profile to follow (Owner only)",
+        description: "The link, steamID64 or vanity of the profile/curator/workshop item to follow (Owner only)",
         type: "string",
       },
     ],
@@ -144,7 +144,7 @@ export const commands: Array<CommandDescription> = [
   {
     name: "unfollow",
     description:
-      "Unfollows a user with all bot accounts that have followed them",
+      "Unfollows a user/curator/workshop item with all bot accounts that have followed them",
     args: [
       {
         name: "amount",
@@ -153,7 +153,7 @@ export const commands: Array<CommandDescription> = [
       },
       {
         name: "ID",
-        description: "The link, steamID64 or vanity of the profile to unfollow (Owner only)",
+        description: "The link, steamID64 or vanity of the profile/curator/workshop item to unfollow (Owner only)",
         type: "string",
       },
     ],
@@ -266,8 +266,13 @@ export const commands: Array<CommandDescription> = [
   {
     name: "addfriend",
     description:
-      "Adds the ID with all bot accounts. Requires unlimited accounts! (Owner only)",
+      "Adds the ID with amount/all available bot accounts. Requires unlimited accounts! (Owner only)",
     args: [
+      {
+        name: "amount",
+        description: "The amount of accounts to request to add",
+        type: "string",
+      },
       {
         name: "ID",
         description: "The link, steamID64 or vanity of the profile to add",
@@ -300,8 +305,13 @@ export const commands: Array<CommandDescription> = [
   },
   {
     name: "joingroup",
-    description: "Joins a Steam Group with all bot accounts. (Owner only)",
+    description: "Joins a Steam Group with amount/all available bot accounts. (Owner only)",
     args: [
+      {
+        name: "amount",
+        description: "The amount of accounts to request to join",
+        type: "string",
+      },
       {
         name: "ID",
         description: "The link or groupID64 of the group to join",
@@ -391,6 +401,32 @@ export const commands: Array<CommandDescription> = [
   {
     name: "log",
     description: "Shows the last 15 lines of the log. (Owner only)",
+    args: [],
+  },
+  {
+    name: "plugins",
+    description: "Lists all installed plugins. (Owner only)",
+    args: [],
+  },
+  {
+    name: "manage",
+    description: "Interact with the manage module to administrate the active set of bot accounts. (Owner only)",
+    args: [
+      {
+        name: "mode",
+        description: `Available modes: 'addAccount, removeAccount, filterAccounts, proxyStatus'`,
+        type: "string",
+      },
+      {
+        name: "argument",
+        description: "Argument(s) the selected mode requires. Run command without this parameter to display help for the selected mode",
+        type: "string",
+      }
+    ],
+  },
+  {
+    name: "stats",
+    description: "Returns statistics about the amount of fulfilled requests.",
     args: [],
   },
 ];

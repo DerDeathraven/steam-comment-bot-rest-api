@@ -2,7 +2,8 @@ export enum EStatus {
   OFFLINE,
   ONLINE,
   ERROR,
-  SKIPPED
+  SKIPPED,
+  POSTPONED
 }
 
 export type getBotsResponse = {

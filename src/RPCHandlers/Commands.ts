@@ -55,15 +55,20 @@ export class Commands {
     resInfo: resInfo
   ): Promise<string> {
     return new Promise((resolve) => {
-      this.commandHandler.runCommand(
-        command,
-        args,
-        (context, infoData, data) => {
-          resolve(data as string);
-        },
-        this,
-        resInfo
-      );
+      (async () => {
+        const result = await this.commandHandler.runCommand(
+          command,
+          args,
+          (context, infoData, data) => {
+            resolve(data as string);
+          },
+          this,
+          resInfo
+        );
+
+        // Resolve promise with result returned by runCommand() if it didn't succeed as respondModule won't be called anyways, leaving this Promise pending
+        if (!result.success) resolve(result.message || result.reason);
+      })();
     });
   }
 }
